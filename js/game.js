@@ -34,7 +34,7 @@ const ST_TEXT_Y = 1.3 * BOX;
 const ST_WIN_X = ST_TEXT_X - BOX;
 const ST_WIN_Y = ST_TEXT_Y * 2;
 
-const dices = [dices0, dices1, dices2, dices3, dices4, dices5, dices6,];
+const dices = [dices0, dices1, dices2, dices3, dices4, dices5, dices6];
 const play = [
   'White',
   'Black',
@@ -56,78 +56,88 @@ let fishka;
 let move;
 let dir;
 
-const fishka_B = [0,0,0,0,0,0,0,0,0,6,6,6,6,false,false,false,false];
-const fishka_W = [0,0,0,0,0,0,0,0,0,6,6,6,6,false,false,false,false];
+const fishka_B = new Array(13);
+const fishka_W = new Array(13);
+
+const startFishka = (array) => {
+  for (let i = 0; i < array.length; i++) {
+    if (i < 5) array[i] = 0;
+    else if (i < 9) array[i] = 6;
+    else array[i] = false;
+  }
+};
+
+startFishka(fishka_B);
+startFishka(fishka_W);
 
 const koordB = [
-	{x: 0, y: 0},
-	{x: 0, y: 1},
-	{x: 0, y: 2},
-	{x: 0, y: 3},
-	{x: 0, y: 4},
-	{x: 0, y: 5},
-	{x: 0, y: 6},
-	{x: 0, y: 7},
-	{x: 1, y: 7},
-	{x: 2, y: 7},
-	{x: 3, y: 7},
-	{x: 4, y: 7},
-	{x: 5, y: 7},
-	{x: 6, y: 7},
-	{x: 7, y: 7},
-	{x: 7, y: 6},
-	{x: 7, y: 5},
-	{x: 7, y: 4},
-	{x: 7, y: 3},
-	{x: 7, y: 2},
-	{x: 7, y: 1},
-	{x: 7, y: 0},
-	{x: 6, y: 0},
-	{x: 5, y: 0},
-	{x: 4, y: 0},
-	{x: 3, y: 0},
-	{x: 2, y: 0},
-	{x: 1, y: 0},
-	{x: 0, y: 0},
-	{x: 1, y: 1},
-	{x: 2, y: 2},
-	{x: 3, y: 3},
-	];
+  { x: 0, y: 0 },
+  { x: 0, y: 1 },
+  { x: 0, y: 2 },
+  { x: 0, y: 3 },
+  { x: 0, y: 4 },
+  { x: 0, y: 5 },
+  { x: 0, y: 6 },
+  { x: 0, y: 7 },
+  { x: 1, y: 7 },
+  { x: 2, y: 7 },
+  { x: 3, y: 7 },
+  { x: 4, y: 7 },
+  { x: 5, y: 7 },
+  { x: 6, y: 7 },
+  { x: 7, y: 7 },
+  { x: 7, y: 6 },
+  { x: 7, y: 5 },
+  { x: 7, y: 4 },
+  { x: 7, y: 3 },
+  { x: 7, y: 2 },
+  { x: 7, y: 1 },
+  { x: 7, y: 0 },
+  { x: 6, y: 0 },
+  { x: 5, y: 0 },
+  { x: 4, y: 0 },
+  { x: 3, y: 0 },
+  { x: 2, y: 0 },
+  { x: 1, y: 0 },
+  { x: 0, y: 0 },
+  { x: 1, y: 1 },
+  { x: 2, y: 2 },
+  { x: 3, y: 3 },
+];
 
 const koordW = [
-	{x: 7, y: 7},
-	{x: 7, y: 6},
-	{x: 7, y: 5},
-	{x: 7, y: 4},
-	{x: 7, y: 3},
-	{x: 7, y: 2},
-	{x: 7, y: 1},
-	{x: 7, y: 0},
-	{x: 6, y: 0},
-	{x: 5, y: 0},
-	{x: 4, y: 0},
-	{x: 3, y: 0},
-	{x: 2, y: 0},
-	{x: 1, y: 0},
-	{x: 0, y: 0},
-	{x: 0, y: 1},
-	{x: 0, y: 2},
-	{x: 0, y: 3},
-	{x: 0, y: 4},
-	{x: 0, y: 5},
-	{x: 0, y: 6},
-	{x: 0, y: 7},
-	{x: 1, y: 7},
-	{x: 2, y: 7},
-	{x: 3, y: 7},
-	{x: 4, y: 7},
-	{x: 5, y: 7},
-	{x: 6, y: 7},
-	{x: 7, y: 7},
-	{x: 6, y: 6},
-	{x: 5, y: 5},
-	];	
-
+  { x: 7, y: 7 },
+  { x: 7, y: 6 },
+  { x: 7, y: 5 },
+  { x: 7, y: 4 },
+  { x: 7, y: 3 },
+  { x: 7, y: 2 },
+  { x: 7, y: 1 },
+  { x: 7, y: 0 },
+  { x: 6, y: 0 },
+  { x: 5, y: 0 },
+  { x: 4, y: 0 },
+  { x: 3, y: 0 },
+  { x: 2, y: 0 },
+  { x: 1, y: 0 },
+  { x: 0, y: 0 },
+  { x: 0, y: 1 },
+  { x: 0, y: 2 },
+  { x: 0, y: 3 },
+  { x: 0, y: 4 },
+  { x: 0, y: 5 },
+  { x: 0, y: 6 },
+  { x: 0, y: 7 },
+  { x: 1, y: 7 },
+  { x: 2, y: 7 },
+  { x: 3, y: 7 },
+  { x: 4, y: 7 },
+  { x: 5, y: 7 },
+  { x: 6, y: 7 },
+  { x: 7, y: 7 },
+  { x: 6, y: 6 },
+  { x: 5, y: 5 },
+];
 
 document.addEventListener('keydown', direction);
 const valueKey = [32, 49, 50, 51, 52];
@@ -182,7 +192,6 @@ const testBeat = (colorB) => {
   }
 };
 
-
 const newFishka = (colorA, colorB, dirN) => {
   if (colorA[0] === 4) {
     testMove = 0;
@@ -207,8 +216,8 @@ const newFishka = (colorA, colorB, dirN) => {
     for (let i = 1; i <= colorA[0]; i++) {
       if (colorA[i + 4] >= step) testDelta++;
       if (colorA[i] === 0 || colorA[i] === 28) {
-          testMove = 0;
-          run(colorA, colorB, dirN);
+        testMove = 0;
+        run(colorA, colorB, dirN);
         return;
       }
     }
@@ -315,10 +324,10 @@ function drawGame() {
   ctx.drawImage(ground, 0, 0);
   ctx.drawImage(dices[step], 30, 30);
   if (fishka_B[4] === 28 || fishka_W[4] === 28) gameOver();
-     
+
   for (let i = 1; i <= fishka_W[0]; i++) {
     ctx.drawImage(checkersWhite, koordW[fishka_W[i]].x, koordW[fishka_W[i]].y);
-    if (player===0 && fishka_W[i + 8] === true && space === false) {
+    if (player === 0 && fishka_W[i + 8] === true && space === false) {
       styleText('Black', '20px Arial');
       ctx.fillText(
         i,
@@ -329,7 +338,7 @@ function drawGame() {
   }
   for (let i = 1; i <= fishka_B[0]; i++) {
     ctx.drawImage(checkersBlack, koordB[fishka_B[i]].x, koordB[fishka_B[i]].y);
-    if (player===1 && fishka_B[i + 8] === true && space === false) {
+    if (player === 1 && fishka_B[i + 8] === true && space === false) {
       styleText('white', '20px Arial');
       ctx.fillText(
         i,
@@ -338,13 +347,13 @@ function drawGame() {
       );
     }
   }
- 
+
   if (fishka[0] === 0) {
     if (dir === 0) {
       drive();
       if (step !== 6) next();
       else playChange(newFishka);
-      }
+    }
   }
   if (fishka[0] !== 0) {
     playChange(delta);
@@ -353,7 +362,7 @@ function drawGame() {
       if (step !== 6) playChange(run);
       else playChange(newFishka);
     }
-    if (dir > 0 && space === false) { 
+    if (dir > 0 && space === false) {
       if (step !== 6) playChange(run);
       else playChange(newFishka);
     }
@@ -361,4 +370,3 @@ function drawGame() {
 }
 
 let game = setInterval(drawGame, 500);
-
