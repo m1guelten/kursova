@@ -269,33 +269,39 @@ const gameOver = () => {
   clearInterval(game);
 };
 
+const painting = (player) => {
+  const noPlayer = player + Math.pow(-1, player);
+  checker = eval(play[player + 6]);
+  koord = eval(play[player + 4]);
+  fishka = eval(play[player + 2]);
+
+  styleText('white', '100px Arial');
+  ctx.fillText(play[player], ST_TEXT_X, ST_TEXT_Y);
+
+  for (let i = 1; i <= fishka_W[0]; i++) {
+    ctx.drawImage(checkersWhite, koordW[fishka_W[i]].x, koordW[fishka_W[i]].y);
+  }
+  for (let i = 1; i <= fishka_B[0]; i++) {
+    ctx.drawImage(checkersBlack, koordB[fishka_B[i]].x, koordB[fishka_B[i]].y);
+  }
+  for (let i = 1; i <= fishka[0]; i++) {
+    if (fishka[i + 8] === true && space === false) {
+      styleText(play[noPlayer], '20px Arial');
+      ctx.fillText(
+        i,
+        koord[fishka[i]].x + ST_NUM_X,
+        koord[fishka[i]].y + ST_NUM_Y
+      );
+    }
+  }
+};
+
 function drawGame() {
   ctx.drawImage(ground, 0, 0);
   ctx.drawImage(dices[step], 30, 30);
   if (fishka_B[4] === 28 || fishka_W[4] === 28) gameOver();
 
-  for (let i = 1; i <= fishka_W[0]; i++) {
-    ctx.drawImage(checkersWhite, koordW[fishka_W[i]].x, koordW[fishka_W[i]].y);
-    if (player === 0 && fishka_W[i + 8] === true && space === false) {
-      styleText('Black', '20px Arial');
-      ctx.fillText(
-        i,
-        koordW[fishka_W[i]].x + ST_NUM_X,
-        koordW[fishka_W[i]].y + ST_NUM_Y
-      );
-    }
-  }
-  for (let i = 1; i <= fishka_B[0]; i++) {
-    ctx.drawImage(checkersBlack, koordB[fishka_B[i]].x, koordB[fishka_B[i]].y);
-    if (player === 1 && fishka_B[i + 8] === true && space === false) {
-      styleText('white', '20px Arial');
-      ctx.fillText(
-        i,
-        koordB[fishka_B[i]].x + ST_NUM_X,
-        koordB[fishka_B[i]].y + ST_NUM_Y
-      );
-    }
-  }
+  painting(player);
 
   if (fishka[0] === 0) {
     if (dir === 0) {
