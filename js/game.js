@@ -296,6 +296,13 @@ const painting = (player) => {
   }
 };
 
+const controlDiceSix = () => {
+  if (step !== 6) {
+    if (fishka[0] !== 0) playChange(run);
+    else next();
+  } else playChange(newFishka);
+};
+
 function drawGame() {
   ctx.drawImage(ground, 0, 0);
   ctx.drawImage(dices[step], 30, 30);
@@ -306,21 +313,16 @@ function drawGame() {
   if (fishka[0] === 0) {
     if (dir === 0) {
       drive();
-      if (step !== 6) next();
-      else playChange(newFishka);
+      controlDiceSix();
     }
   }
   if (fishka[0] !== 0) {
     playChange(delta);
     if (dir === 0 && space === true) {
       drive();
-      if (step !== 6) playChange(run);
-      else playChange(newFishka);
+       controlDiceSix();
     }
-    if (dir > 0 && space === false) {
-      if (step !== 6) playChange(run);
-      else playChange(newFishka);
-    }
+    if (dir > 0 && space === false) controlDiceSix();
   }
 }
 
