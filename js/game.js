@@ -70,74 +70,23 @@ const startFishka = (array) => {
 startFishka(fishka_B);
 startFishka(fishka_W);
 
-const koordB = [
-  { x: 0, y: 0 },
-  { x: 0, y: 1 },
-  { x: 0, y: 2 },
-  { x: 0, y: 3 },
-  { x: 0, y: 4 },
-  { x: 0, y: 5 },
-  { x: 0, y: 6 },
-  { x: 0, y: 7 },
-  { x: 1, y: 7 },
-  { x: 2, y: 7 },
-  { x: 3, y: 7 },
-  { x: 4, y: 7 },
-  { x: 5, y: 7 },
-  { x: 6, y: 7 },
-  { x: 7, y: 7 },
-  { x: 7, y: 6 },
-  { x: 7, y: 5 },
-  { x: 7, y: 4 },
-  { x: 7, y: 3 },
-  { x: 7, y: 2 },
-  { x: 7, y: 1 },
-  { x: 7, y: 0 },
-  { x: 6, y: 0 },
-  { x: 5, y: 0 },
-  { x: 4, y: 0 },
-  { x: 3, y: 0 },
-  { x: 2, y: 0 },
-  { x: 1, y: 0 },
-  { x: 0, y: 0 },
-  { x: 1, y: 1 },
-  { x: 2, y: 2 },
-  { x: 3, y: 3 },
-];
+const koordB = new Array(32);
+const koordW = new Array(32);
 
-const koordW = [
-  { x: 7, y: 7 },
-  { x: 7, y: 6 },
-  { x: 7, y: 5 },
-  { x: 7, y: 4 },
-  { x: 7, y: 3 },
-  { x: 7, y: 2 },
-  { x: 7, y: 1 },
-  { x: 7, y: 0 },
-  { x: 6, y: 0 },
-  { x: 5, y: 0 },
-  { x: 4, y: 0 },
-  { x: 3, y: 0 },
-  { x: 2, y: 0 },
-  { x: 1, y: 0 },
-  { x: 0, y: 0 },
-  { x: 0, y: 1 },
-  { x: 0, y: 2 },
-  { x: 0, y: 3 },
-  { x: 0, y: 4 },
-  { x: 0, y: 5 },
-  { x: 0, y: 6 },
-  { x: 0, y: 7 },
-  { x: 1, y: 7 },
-  { x: 2, y: 7 },
-  { x: 3, y: 7 },
-  { x: 4, y: 7 },
-  { x: 5, y: 7 },
-  { x: 6, y: 7 },
-  { x: 7, y: 7 },
-  { x: 6, y: 6 },
-  { x: 5, y: 5 },
-];
+for (let i = 0; i < koordB.length; i++) {
+  if (i < 8) koordB[i] = { x: ST_X, y: ST_Y + BOX * i };
+  else if (i < 15) koordB[i] = { x: ST_X + BOX * (i - 7), y: ST_Y + BOX * 7 };
+  else if (i < 22) koordB[i] = { x: ST_X + BOX * 7, y: ST_Y + BOX * (21 - i) };
+  else if (i < 29) koordB[i] = { x: ST_X + BOX * (28 - i), y: ST_Y };
+  else koordB[i] = { x: ST_X + BOX * (i - 28), y: ST_Y + BOX * (i - 28) };
+}
+for (let i = 0; i < koordW.length; i++) {
+  if (i < 8) koordW[i] = { x: ST_X + BOX * 7, y: ST_Y + BOX * (7 - i) };
+  else if (i < 15) koordW[i] = { x: ST_X + BOX * (14 - i), y: ST_Y };
+  else if (i < 22) koordW[i] = { x: ST_X, y: ST_Y + BOX * (i - 14) };
+  else if (i < 29) koordW[i] = { x: ST_X + BOX * (i - 21), y: ST_Y + BOX * 7 };
+  else koordW[i] = { x: ST_X + BOX * (35 - i), y: ST_Y + BOX * (35 - i) };
+}
 
 document.addEventListener('keydown', direction);
 const valueKey = [32, 49, 50, 51, 52];
