@@ -141,10 +141,22 @@ const testBeat = (colorB) => {
   }
 };
 
+const endNewFishka = (colorA, colorB, dirN) => {
+  testMove = 0;
+  run(colorA, colorB, dirN);
+};
+
+const bornChecker = (colorA, colorB) => {
+  dir = -1;
+  space = true;
+  colorA[0]++;
+  colorA[colorA[0] + 8] = true;
+  delta(colorA, colorB);
+};
+
 const newFishka = (colorA, colorB, dirN) => {
   if (colorA[0] === 4) {
-    testMove = 0;
-    run(colorA, colorB, dirN);
+    endNewFishka(colorA, colorB, dirN);
     return;
   } else if (colorA[0] === 0) {
     for (let i = 1; i <= colorB[0]; i++) {
@@ -154,19 +166,14 @@ const newFishka = (colorA, colorB, dirN) => {
         testBeat(colorB);
       }
     }
-    dir = -1;
-    space = true;
-    colorA[0]++;
-    colorA[colorA[0] + 8] = true;
-    delta(colorA, colorB);
+    bornChecker(colorA, colorB);
     return;
   } else {
     let testDelta = 0;
     for (let i = 1; i <= colorA[0]; i++) {
       if (colorA[i + 4] >= step) testDelta++;
       if (colorA[i] === 0 || colorA[i] === 28) {
-        testMove = 0;
-        run(colorA, colorB, dirN);
+        endNewFishka(colorA, colorB, dirN);
         return;
       }
     }
@@ -178,17 +185,12 @@ const newFishka = (colorA, colorB, dirN) => {
           testBeat(colorB);
         }
       }
-      dir = -1;
-      space = true;
-      colorA[0]++;
-      colorA[colorA[0] + 8] = true;
-      delta(colorA, colorB);
+      bornChecker(colorA, colorB);
       return;
     }
     if (dirN > 0) {
       if (colorA[dirN + 8] === false) return;
-      testMove = 0;
-      run(colorA, colorB, dirN);
+      endNewFishka(colorA, colorB, dirN);
     }
   }
 };
