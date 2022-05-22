@@ -223,8 +223,7 @@ const delta = (colorA, colorB) => {
   }
 };
 
-const run = (colorA, colorB, dirN = -1) => {
-  delta(colorA, colorB);
+const testMoveFishka = (colorA) => {
   if (testMove === 0) {
     for (let i = 1; i <= colorA[0]; i++) {
       if (step <= colorA[i + 4]) {
@@ -233,6 +232,18 @@ const run = (colorA, colorB, dirN = -1) => {
       } else colorA[i + 8] = false;
     }
   }
+};
+
+const endRun = (colorA, colorB) => {
+  testMove = 0;
+  delta(colorA, colorB);
+  space = true;
+  next();
+};
+
+const run = (colorA, colorB, dirN = -1) => {
+  delta(colorA, colorB);
+  testMoveFishka(colorA);
 
   if (testMove > 1) space = false;
   if (testMove === 0) next();
@@ -244,20 +255,14 @@ const run = (colorA, colorB, dirN = -1) => {
         colorA[i] += step;
       }
     }
-    testMove = 0;
-    delta(colorA, colorB);
-    space = true;
-    next();
+    endRun(colorA, colorB);
   }
   if (testMove > 1 && dirN > 0) {
     if (colorA[dirN + 8] === false) return;
     move = colorA[dirN] + step;
     testBeat(colorB);
     colorA[dirN] += step;
-    testMove = 0;
-    delta(colorA, colorB);
-    space = true;
-    next();
+    endRun(colorA, colorB);
   }
 };
 
@@ -320,7 +325,7 @@ function drawGame() {
     playChange(delta);
     if (dir === 0 && space === true) {
       drive();
-       controlDiceSix();
+      controlDiceSix();
     }
     if (dir > 0 && space === false) controlDiceSix();
   }
