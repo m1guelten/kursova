@@ -98,7 +98,7 @@ document.addEventListener('keydown', direction);
 const valueKey = [32, 49, 50, 51, 52];
 function direction(event) {
   for (let i = 0; i < valueKey.length; i++) {
-    if (event.keyCode == valueKey[i]) gameLet.dir = i;
+    if (event.keyCode === valueKey[i]) gameLet.dir = i;
   }
 }
 
