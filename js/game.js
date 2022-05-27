@@ -173,6 +173,12 @@ const endNewFishka = (colorA, colorB, dirN) => {
 };
 
 const bornChecker = (colorA, colorB) => {
+  for (let i = 1; i <= colorB[0]; i++) {
+    if (colorB[i] === BIAS) {
+      gameLet.move = 0;
+      testBeat(colorB);
+    }
+  }
   gameLet.dir = -1;
   gameLet.space = true;
   colorA[0]++;
@@ -185,12 +191,6 @@ const newFishka = (colorA, colorB, dirN) => {
     endNewFishka(colorA, colorB, dirN);
     return;
   } else if (colorA[0] === 0) {
-    for (let i = 1; i <= colorB[0]; i++) {
-      if (colorB[i] === BIAS) {
-        gameLet.move = 0;
-        testBeat(colorB);
-      }
-    }
     bornChecker(colorA, colorB);
     return;
   } else {
@@ -204,12 +204,6 @@ const newFishka = (colorA, colorB, dirN) => {
     }
     gameLet.space = false;
     if (testDelta === 0 || dirN === colorA[0] + 1) {
-      for (let i = 1; i <= colorB[0]; i++) {
-        if (colorB[i] === BIAS) {
-          gameLet.move = 0;
-          testBeat(colorB);
-        }
-      }
       bornChecker(colorA, colorB);
       return;
     }
