@@ -3,26 +3,31 @@
 const canvas = document.getElementById('chess');
 const ctx = canvas.getContext('2d');
 
-const ground = new Image();
-ground.src = 'img/chess.jpg';
-const dices0 = new Image();
-dices0.src = 'img/dices.png';
-const dices1 = new Image();
-dices1.src = 'img/dices1.png';
-const dices2 = new Image();
-dices2.src = 'img/dices2.png';
-const dices3 = new Image();
-dices3.src = 'img/dices3.png';
-const dices4 = new Image();
-dices4.src = 'img/dices4.png';
-const dices5 = new Image();
-dices5.src = 'img/dices5.png';
-const dices6 = new Image();
-dices6.src = 'img/dices6.png';
-const checkersBlack = new Image();
-checkersBlack.src = 'img/checkersBlack.png';
-const checkersWhite = new Image();
-checkersWhite.src = 'img/checkersWhite.png';
+const loadImages = (imageFiles) => {
+  const images = new Map();
+  for (const fileName of imageFiles) {
+    const [name] = fileName.split('.');
+    const image = new Image();
+    image.src = 'img/' + fileName;
+    images.set(name, image);
+  }
+  return images;
+};
+
+const spriteFiles = [
+  'ground.jpg',
+  'dices0.png',
+  'dices1.png',
+  'dices2.png',
+  'dices3.png',
+  'dices4.png',
+  'dices5.png',
+  'dices6.png',
+  'checkersBlack.png',
+  'checkersWhite.png',
+];
+
+const sprites = loadImages(spriteFiles);
 
 const BOX = 80;
 const ST_NUM_X = BOX / 2 - 10;
@@ -33,8 +38,9 @@ const ST_TEXT_X = 4 * BOX;
 const ST_TEXT_Y = 1.3 * BOX;
 const ST_WIN_X = ST_TEXT_X - BOX;
 const ST_WIN_Y = ST_TEXT_Y * 2;
+const KOORD_DICE_X = 30;
+const KOORD_DICE_Y = 30;
 
-const dices = [dices0, dices1, dices2, dices3, dices4, dices5, dices6];
 const play = [
   'White',
   'Black',
@@ -278,7 +284,7 @@ const gameOver = () => {
 
 const painting = (player) => {
   const noPlayer = player + Math.pow(-1, player);
-  checker = eval(play[player + 6]);
+  checker = play[player + 6];
   koord = eval(play[player + 4]);
   fishka = eval(play[player + 2]);
 
@@ -286,10 +292,18 @@ const painting = (player) => {
   ctx.fillText(play[player], ST_TEXT_X, ST_TEXT_Y);
 
   for (let i = 1; i <= fishka_W[0]; i++) {
-    ctx.drawImage(checkersWhite, koordW[fishka_W[i]].x, koordW[fishka_W[i]].y);
+    ctx.drawImage(
+      sprites.get('checkersWhite'),
+      koordW[fishka_W[i]].x,
+      koordW[fishka_W[i]].y
+    );
   }
   for (let i = 1; i <= fishka_B[0]; i++) {
-    ctx.drawImage(checkersBlack, koordB[fishka_B[i]].x, koordB[fishka_B[i]].y);
+    ctx.drawImage(
+      sprites.get('checkersBlack'),
+      koordB[fishka_B[i]].x,
+      koordB[fishka_B[i]].y
+    );
   }
   for (let i = 1; i <= fishka[0]; i++) {
     if (fishka[i + 8] === true && space === false) {
@@ -311,8 +325,8 @@ const controlDiceSix = () => {
 };
 
 function drawGame() {
-  ctx.drawImage(ground, 0, 0);
-  ctx.drawImage(dices[step], 30, 30);
+  ctx.drawImage(sprites.get('ground'), 0, 0);
+  ctx.drawImage(sprites.get(`dices${step}`), KOORD_DICE_X, KOORD_DICE_Y);
   if (fishka_B[4] === 28 || fishka_W[4] === 28) gameOver();
 
   painting(player);
