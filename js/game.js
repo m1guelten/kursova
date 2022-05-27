@@ -8,7 +8,7 @@ const loadImages = (imageFiles) => {
   for (const fileName of imageFiles) {
     const [name] = fileName.split('.');
     const image = new Image();
-    image.src = 'img/' + fileName;
+    image.src='img/' + fileName;
     images.set(name, image);
   }
   return images;
@@ -52,15 +52,15 @@ const play = [
   'checkersBlack',
 ];
 
-let step = 0;
-let player = 0;
-let testMove = 0;
-let space = true;
-let checker;
-let koord;
-let fishka;
-let move;
-let dir;
+const gameLet = {
+  player: 0,
+  step: 0,
+  testMove:  0,
+  move: 0,
+  dir: -1,
+  space: true,
+  fishka: 'fishka_W',  
+}
 
 const fishka_B = new Array(13);
 const fishka_W = new Array(13);
@@ -98,20 +98,20 @@ document.addEventListener('keydown', direction);
 const valueKey = [32, 49, 50, 51, 52];
 function direction(event) {
   for (let i = 0; i < valueKey.length; i++) {
-    if (event.keyCode == valueKey[i]) dir = i;
+    if (event.keyCode == valueKey[i]) gameLet.dir = i;
   }
 }
 
 const next = () => {
-  if (player === 0) player = 1;
-  else player = 0;
+  if (gameLet.player === 0) gameLet.player = 1;
+  else gameLet.player = 0;
 };
 
 const random = () => Math.floor(Math.random() * 6) + 1;
 
 const drive = () => {
-  step = random();
-  dir = -1;
+  gameLet.step = random();
+  gameLet.dir = -1;
 };
 
 const styleText = (color, font) => {
@@ -120,14 +120,14 @@ const styleText = (color, font) => {
 };
 
 const playChange = (func) => {
-  if (player === 0) func(fishka_W, fishka_B, dir);
-  else func(fishka_B, fishka_W, dir);
+  if (gameLet.player === 0) func(fishka_W, fishka_B, gameLet.dir);
+  else func(fishka_B, fishka_W, gameLet.dir);
 };
 
 const testBeat = (colorB) => {
   let beat;
-  if (move <= 14) beat = move + 14;
-  else if (move <= 28) beat = move - 14;
+  if (gameLet.move <= 14) beat = gameLet.move + 14;
+  else if (gameLet.move <= 28) beat = gameLet.move - 14;
   else return;
 
   let beat2 = beat;
@@ -148,13 +148,13 @@ const testBeat = (colorB) => {
 };
 
 const endNewFishka = (colorA, colorB, dirN) => {
-  testMove = 0;
+  gameLet.testMove = 0;
   run(colorA, colorB, dirN);
 };
 
 const bornChecker = (colorA, colorB) => {
-  dir = -1;
-  space = true;
+  gameLet.dir = -1;
+  gameLet.space = true;
   colorA[0]++;
   colorA[colorA[0] + 8] = true;
   delta(colorA, colorB);
@@ -167,8 +167,7 @@ const newFishka = (colorA, colorB, dirN) => {
   } else if (colorA[0] === 0) {
     for (let i = 1; i <= colorB[0]; i++) {
       if (colorB[i] === 14) {
-        // testMove = 0;
-        move = 0;
+        gameLet.move = 0;
         testBeat(colorB);
       }
     }
@@ -177,17 +176,17 @@ const newFishka = (colorA, colorB, dirN) => {
   } else {
     let testDelta = 0;
     for (let i = 1; i <= colorA[0]; i++) {
-      if (colorA[i + 4] >= step) testDelta++;
+      if (colorA[i + 4] >= gameLet.step) testDelta++;
       if (colorA[i] === 0 || colorA[i] === 28) {
         endNewFishka(colorA, colorB, dirN);
         return;
       }
     }
-    space = false;
+    gameLet.space = false;
     if (testDelta === 0 || dirN === colorA[0] + 1) {
       for (let i = 1; i <= colorB[0]; i++) {
         if (colorB[i] === 14) {
-          move = 0;
+          gameLet.move = 0;
           testBeat(colorB);
         }
       }
@@ -232,20 +231,20 @@ const delta = (colorA, colorB) => {
 };
 
 const testMoveFishka = (colorA) => {
-  if (testMove === 0) {
+  if (gameLet.testMove === 0) {
     for (let i = 1; i <= colorA[0]; i++) {
-      if (step <= colorA[i + 4]) {
+      if (gameLet.step <= colorA[i + 4]) {
         colorA[i + 8] = true;
-        testMove++;
+        gameLet.testMove++;
       } else colorA[i + 8] = false;
     }
   }
 };
 
 const endRun = (colorA, colorB) => {
-  testMove = 0;
+  gameLet.testMove = 0;
   delta(colorA, colorB);
-  space = true;
+  gameLet.space = true;
   next();
 };
 
@@ -253,23 +252,23 @@ const run = (colorA, colorB, dirN = -1) => {
   delta(colorA, colorB);
   testMoveFishka(colorA);
 
-  if (testMove > 1) space = false;
-  if (testMove === 0) next();
-  if (testMove === 1) {
+  if (gameLet.testMove > 1) gameLet.space = false;
+  if (gameLet.testMove === 0) next();
+  if (gameLet.testMove === 1) {
     for (let i = 1; i <= colorA[0]; i++) {
       if (colorA[i + 8] === true) {
-        move = colorA[i] + step;
+        gameLet.move = colorA[i] + gameLet.step;
         testBeat(colorB);
-        colorA[i] += step;
+        colorA[i] += gameLet.step;
       }
     }
     endRun(colorA, colorB);
   }
-  if (testMove > 1 && dirN > 0) {
+  if (gameLet.testMove > 1 && dirN > 0) {
     if (colorA[dirN + 8] === false) return;
-    move = colorA[dirN] + step;
+    gameLet.move = colorA[dirN] + gameLet.step;
     testBeat(colorB);
-    colorA[dirN] += step;
+    colorA[dirN] += gameLet.step;
     endRun(colorA, colorB);
   }
 };
@@ -277,73 +276,65 @@ const run = (colorA, colorB, dirN = -1) => {
 const gameOver = () => {
   next();
   styleText('white', '100px Arial');
-  ctx.fillText(play[player], ST_TEXT_X, ST_TEXT_Y);
+  ctx.fillText(play[gameLet.player], ST_TEXT_X, ST_TEXT_Y);
   ctx.fillText('WINNER', ST_WIN_X, ST_WIN_Y);
   clearInterval(game);
 };
 
 const painting = (player) => {
   const noPlayer = player + Math.pow(-1, player);
-  checker = play[player + 6];
-  koord = eval(play[player + 4]);
-  fishka = eval(play[player + 2]);
+  const checker = play[player + 6];
+  const koord = eval(play[player + 4]);
+  gameLet.fishka = eval(play[player + 2]);
 
   styleText('white', '100px Arial');
   ctx.fillText(play[player], ST_TEXT_X, ST_TEXT_Y);
 
   for (let i = 1; i <= fishka_W[0]; i++) {
-    ctx.drawImage(
-      sprites.get('checkersWhite'),
-      koordW[fishka_W[i]].x,
-      koordW[fishka_W[i]].y
-    );
+    ctx.drawImage(sprites.get('checkersWhite'), koordW[fishka_W[i]].x, koordW[fishka_W[i]].y);
   }
   for (let i = 1; i <= fishka_B[0]; i++) {
-    ctx.drawImage(
-      sprites.get('checkersBlack'),
-      koordB[fishka_B[i]].x,
-      koordB[fishka_B[i]].y
-    );
+    ctx.drawImage(sprites.get('checkersBlack'), koordB[fishka_B[i]].x, koordB[fishka_B[i]].y);
   }
-  for (let i = 1; i <= fishka[0]; i++) {
-    if (fishka[i + 8] === true && space === false) {
+  for (let i = 1; i <= gameLet.fishka[0]; i++) {
+    if (gameLet.fishka[i + 8] === true && gameLet.space === false) {
       styleText(play[noPlayer], '20px Arial');
       ctx.fillText(
         i,
-        koord[fishka[i]].x + ST_NUM_X,
-        koord[fishka[i]].y + ST_NUM_Y
+        koord[gameLet.fishka[i]].x + ST_NUM_X,
+        koord[gameLet.fishka[i]].y + ST_NUM_Y
       );
     }
   }
 };
 
 const controlDiceSix = () => {
-  if (step !== 6) {
-    if (fishka[0] !== 0) playChange(run);
+  if (gameLet.step !== 6) {
+    if (gameLet.fishka[0] !== 0) playChange(run);
     else next();
   } else playChange(newFishka);
 };
 
 function drawGame() {
   ctx.drawImage(sprites.get('ground'), 0, 0);
-  ctx.drawImage(sprites.get(`dices${step}`), KOORD_DICE_X, KOORD_DICE_Y);
+  ctx.drawImage(sprites.get(`dices${gameLet.step}`), KOORD_DICE_X, KOORD_DICE_Y);
   if (fishka_B[4] === 28 || fishka_W[4] === 28) gameOver();
 
-  painting(player);
+  painting(gameLet.player);
 
-  if (fishka[0] === 0) {
-    if (dir === 0) {
+  if (gameLet.fishka[0] === 0) {
+    if (gameLet.dir === 0) {
       drive();
       controlDiceSix();
     }
   }
-  if (fishka[0] !== 0) {
+  if (gameLet.fishka[0] !== 0) {
     playChange(delta);
-    if (dir === 0 && space === true) {
+    if (gameLet.dir === 0 && gameLet.space === true) {
       drive();
       controlDiceSix();
     }
-    if (dir > 0 && space === false) controlDiceSix();
+    if (gameLet.dir > 0 && gameLet.space === false) controlDiceSix();
   }
 }
 
