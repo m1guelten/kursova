@@ -8,7 +8,7 @@ const loadImages = (imageFiles) => {
   for (const fileName of imageFiles) {
     const [name] = fileName.split('.');
     const image = new Image();
-    image.src='img/' + fileName;
+    image.src = 'img/' + fileName;
     images.set(name, image);
   }
   return images;
@@ -107,10 +107,10 @@ const next = () => {
   else player = 0;
 };
 
-const random = () => (step = Math.floor(Math.random() * 6) + 1);
+const random = () => Math.floor(Math.random() * 6) + 1;
 
 const drive = () => {
-  random();
+  step = random();
   dir = -1;
 };
 
@@ -292,10 +292,18 @@ const painting = (player) => {
   ctx.fillText(play[player], ST_TEXT_X, ST_TEXT_Y);
 
   for (let i = 1; i <= fishka_W[0]; i++) {
-    ctx.drawImage(sprites.get('checkersWhite'), koordW[fishka_W[i]].x, koordW[fishka_W[i]].y);
+    ctx.drawImage(
+      sprites.get('checkersWhite'),
+      koordW[fishka_W[i]].x,
+      koordW[fishka_W[i]].y
+    );
   }
   for (let i = 1; i <= fishka_B[0]; i++) {
-    ctx.drawImage(sprites.get('checkersBlack'), koordB[fishka_B[i]].x, koordB[fishka_B[i]].y);
+    ctx.drawImage(
+      sprites.get('checkersBlack'),
+      koordB[fishka_B[i]].x,
+      koordB[fishka_B[i]].y
+    );
   }
   for (let i = 1; i <= fishka[0]; i++) {
     if (fishka[i + 8] === true && space === false) {
