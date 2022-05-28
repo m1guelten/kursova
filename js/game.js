@@ -120,6 +120,7 @@ function direction(event) {
   for (let i = 0; i < valueKey.length; i++) {
     if (event.keyCode === valueKey[i]) gameLet.dir = i;
   }
+  drawGame();
 }
 
 const next = () => (gameLet.player = gameLet.player === 0 ? 1 : 0);
@@ -290,7 +291,7 @@ const gameOver = () => {
   styleText('white', '100px Arial');
   ctx.fillText(play[gameLet.player], ST_TEXT_X, ST_TEXT_Y);
   ctx.fillText('WINNER', ST_WIN_X, ST_WIN_Y);
-  clearInterval(game);
+  document.removeEventListener('keydown', direction);
 };
 
 const painting = (player) => {
@@ -336,20 +337,6 @@ const controlDiceSix = () => {
 };
 
 function drawGame() {
-  ctx.drawImage(sprites.get('ground'), 0, 0);
-  ctx.drawImage(
-    sprites.get(`dices${gameLet.step}`),
-    KOORD_DICE_X,
-    KOORD_DICE_Y
-  );
-  if (
-    fishka_B[NUMBER_FISHKA] === FULL_CIRCLE ||
-    fishka_W[NUMBER_FISHKA] === FULL_CIRCLE
-  )
-    gameOver();
-
-  painting(gameLet.player);
-
   if (gameLet.fishka[0] === 0) {
     if (gameLet.dir === 0) {
       drive();
@@ -364,6 +351,19 @@ function drawGame() {
     }
     if (gameLet.dir > 0 && gameLet.space === false) controlDiceSix();
   }
+
+  ctx.drawImage(sprites.get('ground'), 0, 0);
+  ctx.drawImage(
+    sprites.get(`dices${gameLet.step}`),
+    KOORD_DICE_X,
+    KOORD_DICE_Y
+  );
+  if (
+    fishka_B[NUMBER_FISHKA] === FULL_CIRCLE ||
+    fishka_W[NUMBER_FISHKA] === FULL_CIRCLE
+  )
+    gameOver();
+  painting(gameLet.player);
 }
 
-let game = setInterval(drawGame, 500);
+drawGame();
