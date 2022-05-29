@@ -53,17 +53,6 @@ const ST_DELTA = 32;
 const ST_DOZVIL = false;
 const MAX_ARREY_FISHKA = 1 + NUMBER_FISHKA * 3;
 
-const play = [
-  'White',
-  'Black',
-  'fishka_W',
-  'fishka_B',
-  'koordW',
-  'koordB',
-  'checkersWhite',
-  'checkersBlack',
-];
-
 const gameLet = {
   player: 0,
   step: 0,
@@ -71,7 +60,6 @@ const gameLet = {
   move: 0,
   dir: -1,
   space: true,
-  fishka: 'fishka_W',
 };
 
 const fishka_B = new Array(MAX_ARREY_FISHKA);
@@ -83,10 +71,10 @@ const fishka_W = new Array(MAX_ARREY_FISHKA);
 //fishka_B(W)[9-12]-DozvilFishka(1-4)
 
 const startFishka = (array) => {
-  for (let i = 0; i < array.length; i++) {            
-    if (i <= NUMBER_FISHKA) array[i] = ST_KOORD;      
-    else if (i <= DOZVIL_FISHKA) array[i] = ST_DELTA; 
-    else array[i] = ST_DOZVIL;                        
+  for (let i = 0; i < array.length; i++) {
+    if (i <= NUMBER_FISHKA) array[i] = ST_KOORD;
+    else if (i <= DOZVIL_FISHKA) array[i] = ST_DELTA;
+    else array[i] = ST_DOZVIL;
   }
 };
 
@@ -304,21 +292,18 @@ const run = (colorA, colorB, dirN = -1) => {
 };
 
 const gameOver = () => {
-  next();
   styleText('white', '100px Arial');
-  ctx.fillText(play[gameLet.player], ST_TEXT_X, ST_TEXT_Y);
+  ctx.fillText(gameLet.player === 0 ? 'Black' : 'White', ST_TEXT_X, ST_TEXT_Y);
   ctx.fillText('WINNER', ST_WIN_X, ST_WIN_Y);
   document.removeEventListener('keydown', direction);
 };
 
 const painting = (player) => {
-  const noPlayer = player + Math.pow(-1, player);
-  const checker = play[player + 6];
-  const koord = eval(play[player + 4]);
-  gameLet.fishka = eval(play[player + 2]);
+  const koord = player === 0 ? koordW : koordB;
+  const fishka = player === 0 ? fishka_W : fishka_B;
 
   styleText('white', '100px Arial');
-  ctx.fillText(play[player], ST_TEXT_X, ST_TEXT_Y);
+  ctx.fillText(player === 0 ? 'White' : 'Black', ST_TEXT_X, ST_TEXT_Y);
 
   for (let i = 1; i <= fishka_W[0]; i++) {
     ctx.drawImage(
@@ -334,13 +319,13 @@ const painting = (player) => {
       koordB[fishka_B[i]].y
     );
   }
-  for (let i = 1; i <= gameLet.fishka[0]; i++) {
-    if (gameLet.fishka[i + DOZVIL_FISHKA] === true && gameLet.space === false) {
-      styleText(play[noPlayer], '20px Arial');
+  for (let i = 1; i <= fishka[0]; i++) {
+    if (fishka[i + DOZVIL_FISHKA] === true && gameLet.space === false) {
+      styleText(player === 0 ? 'Black' : 'White', '20px Arial');
       ctx.fillText(
         i,
-        koord[gameLet.fishka[i]].x + ST_NUM_X,
-        koord[gameLet.fishka[i]].y + ST_NUM_Y
+        koord[fishka[i]].x + ST_NUM_X,
+        koord[fishka[i]].y + ST_NUM_Y
       );
     }
   }
@@ -348,19 +333,19 @@ const painting = (player) => {
 
 const controlDiceSix = () => {
   if (gameLet.step !== 6) {
-    if (gameLet.fishka[0] !== 0) playChange(run);
+    if (gameLet.player === 0 ? fishka_W[0] : fishka_B[0] !== 0) playChange(run);
     else next();
   } else playChange(newFishka);
 };
 
 function drawGame() {
-  if (gameLet.fishka[0] === 0) {
+  if ((gameLet.player === 0 ? fishka_W[0] : fishka_B[0]) === 0) {
     if (gameLet.dir === 0) {
       drive();
       controlDiceSix();
     }
   }
-  if (gameLet.fishka[0] !== 0) {
+  if ((gameLet.player === 0 ? fishka_W[0] : fishka_B[0]) !== 0) {
     playChange(delta);
     if (gameLet.dir === 0 && gameLet.space === true) {
       drive();
