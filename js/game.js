@@ -48,7 +48,8 @@ const MAX_MOVE_UP = 21;
 const BIAS = 14;
 const NUMBER_FISHKA = 4;
 const DOZVIL_FISHKA = NUMBER_FISHKA * 2;
-const ST_DELTA = 6;
+const ST_KOORD = 0;
+const ST_DELTA = 32;
 const ST_DOZVIL = false;
 const MAX_ARREY_FISHKA = 1 + NUMBER_FISHKA * 3;
 
@@ -76,11 +77,16 @@ const gameLet = {
 const fishka_B = new Array(MAX_ARREY_FISHKA);
 const fishka_W = new Array(MAX_ARREY_FISHKA);
 
+//fishka_B(W)[0]   -NumbersFishka
+//fishka_B(W)[1-4] -KoordFishka(1-4)
+//fishka_B(W)[5-8] -DeltaFishka(1-4)
+//fishka_B(W)[9-12]-DozvilFishka(1-4)
+
 const startFishka = (array) => {
-  for (let i = 0; i < array.length; i++) {
-    if (i <= NUMBER_FISHKA) array[i] = 0;
-    else if (i <= DOZVIL_FISHKA) array[i] = ST_DELTA;
-    else array[i] = ST_DOZVIL;
+  for (let i = 0; i < array.length; i++) {            
+    if (i <= NUMBER_FISHKA) array[i] = ST_KOORD;      
+    else if (i <= DOZVIL_FISHKA) array[i] = ST_DELTA; 
+    else array[i] = ST_DOZVIL;                        
   }
 };
 
@@ -182,6 +188,7 @@ const bornChecker = (colorA, colorB) => {
   colorA[0]++;
   colorA[colorA[0] + DOZVIL_FISHKA] = true;
   delta(colorA, colorB);
+  delta(colorB, colorA);
 };
 
 const newFishka = (colorA, colorB, dirN) => {
@@ -212,35 +219,46 @@ const newFishka = (colorA, colorB, dirN) => {
   }
 };
 
-const delta = (colorA, colorB) => {
-  let min = 0;
+const startDelta = (color) => {
+  for (let j = 1; j <= color[0]; j++) {
+    color[j + NUMBER_FISHKA] = ST_DELTA;
+  }
+};
+
+const findFriendEnemy = (colorA, colorB) => {
   let max = MAX_NUMBER_MOVES;
-  if (colorA[colorA[0]] === 0) {
-    max = FULL_CIRCLE;
-    for (let i = 0; i < colorA[0]; i++) {
-      if (colorA[i] > FULL_CIRCLE) min++;
-    }
-  }
-  if (min === 3) {
-    min = 0;
-    max = MAX_NUMBER_MOVES;
-  }
-
-  for (let i = min + 2; i <= colorA[0]; i++) {
-    colorA[i + NUMBER_FISHKA] = colorA[i - 1] - colorA[i] - 1;
-  }
-  colorA[min + NUMBER_FISHKA + 1] = max - colorA[min + 1] - 1;
-  if (min > 0) colorA[5] = MAX_NUMBER_MOVES - colorA[1] - 1;
-  if (min === 2) colorA[6] = colorA[1] - colorA[2] - 1;
-
   for (let j = 1; j <= colorA[0]; j++) {
     for (let i = 1; i <= colorB[0]; i++) {
-      if (colorB[i] <= BIAS) max = colorB[i] + BIAS - colorA[j];
-      else if (colorB[i] <= FULL_CIRCLE) max = colorB[i] - BIAS - colorA[j];
-      if (max > 0 && max < colorA[j + NUMBER_FISHKA])
+      if (colorA === colorB) {
+        max = colorA[i] - colorA[j] - 1;
+      } else {
+        if (colorB[i] <= BIAS) max = colorB[i] + BIAS - colorA[j];
+        else if (colorB[i] <= FULL_CIRCLE) max = colorB[i] - BIAS - colorA[j];
+      }
+      if (max >= 0 && colorA[j + NUMBER_FISHKA] > max) {
         colorA[j + NUMBER_FISHKA] = max;
+      }
     }
+    max = MAX_NUMBER_MOVES;
   }
+};
+
+const delta = (colorA, colorB) => {
+  startDelta(colorA);
+  if (colorA[0] === 0) return;
+  if (colorA[colorA[0]] === 0 && colorA[1] < FULL_CIRCLE) {
+    colorA[colorA[0]] = FULL_CIRCLE;
+    findFriendEnemy(colorA, colorA);
+    colorA[colorA[0]] = 0;
+    if (colorA[0] > 1) {
+      colorA[colorA[0] + NUMBER_FISHKA] =
+        colorA[colorA[0] - 1] - colorA[colorA[0]] - 1;
+    }
+  } else {
+    colorA[1 + NUMBER_FISHKA] = MAX_NUMBER_MOVES - colorA[1] - 1;
+    findFriendEnemy(colorA, colorA);
+  }
+  if (colorB[0] !== 0) findFriendEnemy(colorA, colorB);
 };
 
 const testMoveFishka = (colorA) => {
@@ -257,14 +275,13 @@ const testMoveFishka = (colorA) => {
 const endRun = (colorA, colorB) => {
   gameLet.testMove = 0;
   delta(colorA, colorB);
+  delta(colorB, colorA);
   gameLet.space = true;
   next();
 };
 
 const run = (colorA, colorB, dirN = -1) => {
-  delta(colorA, colorB);
   testMoveFishka(colorA);
-
   if (gameLet.testMove > 1) gameLet.space = false;
   if (gameLet.testMove === 0) next();
   if (gameLet.testMove === 1) {
@@ -351,7 +368,6 @@ function drawGame() {
     }
     if (gameLet.dir > 0 && gameLet.space === false) controlDiceSix();
   }
-
   ctx.drawImage(sprites.get('ground'), 0, 0);
   ctx.drawImage(
     sprites.get(`dices${gameLet.step}`),
